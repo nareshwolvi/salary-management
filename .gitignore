@@ -17,3 +17,9 @@ playwright-report/
 test-results/
 
 *.local
+
+# Local AI / development tool metadata
+.agents/
+.claude/
+.windsurf/
+skills-lock.json

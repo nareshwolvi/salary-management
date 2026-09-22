@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: salary-management-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: salary_admin
+      POSTGRES_PASSWORD: salary_password
+      POSTGRES_DB: salary_management
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
