@@ -68,3 +68,19 @@ export async function findEmployees(params: EmployeeListParams) {
     total,
   };
 }
+
+export async function updateEmployeeSalary(
+  employeeId: string,
+  salary: string,
+  currency: string,
+) {
+  return prisma.employee.update({
+    where: {
+      employeeId,
+    },
+    data: {
+      salary,
+      currency,
+    },
+  });
+}

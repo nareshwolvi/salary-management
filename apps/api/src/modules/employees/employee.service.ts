@@ -1,5 +1,6 @@
 import {
   findEmployees,
+  updateEmployeeSalary,
   type EmployeeListParams,
 } from "./employee.repository.js";
 
@@ -39,4 +40,12 @@ export async function getEmployees(query: EmployeeListQuery) {
       totalPages: Math.ceil(total / query.pageSize),
     },
   };
+}
+
+export async function updateSalary(
+  employeeId: string,
+  salary: string,
+  currency: string,
+) {
+  return updateEmployeeSalary(employeeId, salary, currency);
 }
