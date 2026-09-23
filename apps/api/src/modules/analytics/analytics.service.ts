@@ -1,4 +1,5 @@
 import { getSalarySummary } from "./analytics.repository.js";
+import { getSalaryBreakdown as getSalaryBreakdownData } from "./analytics.repository.js";
 
 const FX_TO_USD: Record<string, number> = {
   USD: 1,
@@ -63,4 +64,48 @@ export async function getSalaryAnalytics() {
     averageSalary: Number(averageSalary.toFixed(2)),
     medianSalary: Number(medianSalary.toFixed(2)),
   };
+}
+
+export async function getSalaryBreakdown(
+  groupBy: "country" | "department",
+) {
+  const employees = await getSalaryBreakdownData(groupBy);
+
+  const groups = new Map<
+    string,
+    {
+      employeeCount: number;
+      totalSalaryCost: number;
+    }
+  >();
+
+  for (const employee of employees) {
+    const salaryInUsd = convertToUsd(
+      employee.salary,
+      employee.currency,
+    );
+
+    const existing = groups.get(employee.group);
+
+    if (existing) {
+      existing.employeeCount += 1;
+      existing.totalSalaryCost += salaryInUsd;
+    } else {
+      groups.set(employee.group, {
+        employeeCount: 1,
+        totalSalaryCost: salaryInUsd,
+      });
+    }
+  }
+
+  return Array.from(groups.entries())
+    .map(([group, values]) => ({
+      group,
+      employeeCount: values.employeeCount,
+      totalSalaryCost: Number(values.totalSalaryCost.toFixed(2)),
+      averageSalary: Number(
+        (values.totalSalaryCost / values.employeeCount).toFixed(2),
+      ),
+    }))
+    .sort((a, b) => a.group.localeCompare(b.group));
 }
