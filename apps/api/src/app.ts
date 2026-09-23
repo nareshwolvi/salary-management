@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import employeeRoutes from "./modules/employees/employee.routes.js";
+import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/employees", employeeRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 export default app;
