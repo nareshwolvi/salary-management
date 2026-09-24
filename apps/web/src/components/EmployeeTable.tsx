@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -94,8 +94,8 @@ function EmployeeTable() {
 
   const [editingEmployeeId, setEditingEmployeeId] =
     useState<string | null>(null);
-  const [editingSalary, setEditingSalary] = useState("");
-  const [editingCurrency, setEditingCurrency] = useState("");
+  const editingSalaryRef = useRef("");
+  const editingCurrencyRef = useRef("");
   const [savingEmployeeId, setSavingEmployeeId] =
     useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -216,22 +216,24 @@ function EmployeeTable() {
   }
 
   function startEditing(employee: Employee) {
+    editingSalaryRef.current = employee.salary;
+    editingCurrencyRef.current = employee.currency;
     setEditingEmployeeId(employee.employeeId);
-    setEditingSalary(employee.salary);
-    setEditingCurrency(employee.currency);
     setSaveError(null);
     setSaveSuccess(null);
   }
 
   function cancelEditing() {
+    editingSalaryRef.current = "";
+    editingCurrencyRef.current = "";
+
     setEditingEmployeeId(null);
-    setEditingSalary("");
-    setEditingCurrency("");
     setSaveError(null);
   }
 
   async function saveSalary(employee: Employee) {
-    const salary = editingSalary.trim();
+    const salary = editingSalaryRef.current.trim();
+    const currency = editingCurrencyRef.current;
 
     if (!/^\d+(\.\d{1,2})?$/.test(salary)) {
       setSaveError(
@@ -245,7 +247,7 @@ function EmployeeTable() {
       return;
     }
 
-    if (!CURRENCIES.includes(editingCurrency)) {
+    if (!CURRENCIES.includes(currency)) {
       setSaveError("Please select a valid currency.");
       return;
     }
@@ -258,7 +260,7 @@ function EmployeeTable() {
       const updatedEmployee = await updateEmployeeSalary(
         employee.employeeId,
         salary,
-        editingCurrency,
+        currency,
       );
 
       setEmployees((currentEmployees) =>
@@ -270,8 +272,8 @@ function EmployeeTable() {
       );
 
       setEditingEmployeeId(null);
-      setEditingSalary("");
-      setEditingCurrency("");
+      editingSalaryRef.current = "";
+      editingCurrencyRef.current = "";
       setSaveSuccess(
         `Salary updated for ${employee.employeeId}.`,
       );
@@ -336,10 +338,10 @@ function EmployeeTable() {
 
     return (
       <InputText
-        value={editingSalary}
-        onChange={(event) =>
-          setEditingSalary(event.target.value)
-        }
+        defaultValue={employee.salary}
+        onChange={(event) => {
+          editingSalaryRef.current = event.target.value;
+    }}
         inputMode="decimal"
         aria-label={`Salary for ${employee.employeeId}`}
         className="w-32"
@@ -357,10 +359,10 @@ function EmployeeTable() {
 
     return (
       <select
-        value={editingCurrency}
-        onChange={(event) =>
-          setEditingCurrency(event.target.value)
-        }
+        defaultValue={employee.currency}
+        onChange={(event) => {
+          editingCurrencyRef.current = event.target.value;
+        }}
         aria-label={`Currency for ${employee.employeeId}`}
         className="rounded-md border border-slate-300 bg-white px-2 py-2 text-sm text-slate-700"
       >
@@ -384,9 +386,7 @@ function EmployeeTable() {
     return (
       <button
         type="button"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
+        onClick={() => {
           startEditing(employee);
         }}
         className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
@@ -556,6 +556,7 @@ function EmployeeTable() {
       ) : (
         <>
           <DataTable
+            key={editingEmployeeId ?? "employees"}
             value={employees}
             stripedRows
             responsiveLayout="scroll"
