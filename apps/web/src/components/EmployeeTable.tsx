@@ -312,7 +312,7 @@ function EmployeeTable() {
       <button
         type="button"
         onClick={() => handleSort(field)}
-        className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
+        className="inline-flex items-center gap-2 whitespace-nowrap font-semibold text-slate-700 hover:text-slate-900"
       >
         <span>{label}</span>
 
@@ -389,7 +389,7 @@ function EmployeeTable() {
         onClick={() => {
           startEditing(employee);
         }}
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+        className="inline-flex min-w-[72px] items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
       >
         Edit
       </button>
@@ -397,7 +397,7 @@ function EmployeeTable() {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <button
         type="button"
         onClick={(event) => {
@@ -406,7 +406,7 @@ function EmployeeTable() {
           void saveSalary(employee);
         }}
         disabled={isSaving}
-        className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex min-w-[72px] items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSaving ? "Saving..." : "Save"}
       </button>
@@ -419,7 +419,7 @@ function EmployeeTable() {
           cancelEditing();
         }}
         disabled={isSaving}
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex min-w-[78px] items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Cancel
       </button>
@@ -441,10 +441,10 @@ function EmployeeTable() {
           </p>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <span className="p-input-icon-left">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="relative w-full border border-slate-300 rounded-md bg-white" >
             <i
-              className="pi pi-search"
+              className="pi pi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               aria-hidden="true"
             />
 
@@ -453,9 +453,9 @@ function EmployeeTable() {
               onChange={handleSearchChange}
               placeholder="Search employee..."
               aria-label="Search employees"
-              className="w-full"
+              className="w-full pl-10 top-1.5 left-1.5 rounded-md border-none bg-transparent py-2 pr-3 text-sm text-slate-700 outline-none focus:ring-0"
             />
-          </span>
+          </div>
 
           <select
             value={country}
@@ -555,64 +555,76 @@ function EmployeeTable() {
         </div>
       ) : (
         <>
-          <DataTable
-            key={editingEmployeeId ?? "employees"}
-            value={employees}
-            stripedRows
-            responsiveLayout="scroll"
-            emptyMessage="No employees found."
-          >
-            <Column
-              field="employeeId"
-              header="Employee ID"
-            />
+          <div className="w-full overflow-x-auto">
+            <DataTable
+              key={editingEmployeeId ?? "employees"}
+              value={employees}
+              stripedRows
+              responsiveLayout="scroll"
+              emptyMessage="No employees found."
+              className="employee-table"
+              tableStyle={{ minWidth: "1180px" }}
+            >
+              <Column
+                field="employeeId"
+                header="Employee ID"
+                style={{ minWidth: "130px" }}
+              />
 
-            <Column
-              field="name"
-              header={renderSortableHeader("Name", "name")}
-            />
+              <Column
+                field="name"
+                header={renderSortableHeader("Name", "name")}
+                style={{ minWidth: "180px" }}
+              />
 
-            <Column
-              field="department"
-              header={renderSortableHeader(
-                "Department",
-                "department",
-              )}
-            />
+              <Column
+                field="department"
+                header={renderSortableHeader(
+                  "Department",
+                  "department",
+                )}
+                style={{ minWidth: "165px" }}
+              />
 
-            <Column
-              field="country"
-              header={renderSortableHeader(
-                "Country",
-                "country",
-              )}
-            />
+              <Column
+                field="country"
+                header={renderSortableHeader(
+                  "Country",
+                  "country",
+                )}
+                style={{ minWidth: "150px" }}
+              />
 
-            <Column
-              field="role"
-              header={renderSortableHeader("Role", "role")}
-            />
+              <Column
+                field="role"
+                header={renderSortableHeader("Role", "role")}
+                style={{ minWidth: "210px" }}
+              />
 
-            <Column
-              field="currency"
-              header="Currency"
-              body={renderCurrencyCell}
-            />
+              <Column
+                field="currency"
+                header="Currency"
+                body={renderCurrencyCell}
+                style={{ minWidth: "110px" }}
+              />
 
-            <Column
-              field="salary"
-              header={renderSortableHeader(
-                "Salary",
-                "salary",
-              )}
-              body={renderSalaryCell}
-            />
+              <Column
+                field="salary"
+                header={renderSortableHeader(
+                  "Salary",
+                  "salary",
+                )}
+                body={renderSalaryCell}
+                style={{ minWidth: "150px" }}
+              />
 
-            <Column
-              header="Actions"
-              body={renderActionsCell}
-            />
-          </DataTable>
+              <Column
+                header="Actions"
+                body={renderActionsCell}
+                style={{ minWidth: "150px" }}
+              />
+            </DataTable>
+          </div>
 
           {pagination && (
             <div className="flex flex-col gap-3 border-t border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">

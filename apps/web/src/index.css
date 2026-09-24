@@ -34,3 +34,17 @@ textarea {
 #root {
   min-height: 100vh;
 }
+
+.employee-table .p-datatable-thead > tr > th {
+  padding: 0.85rem 1rem;
+  white-space: nowrap;
+}
+
+.employee-table .p-datatable-tbody > tr > td {
+  padding: 0.8rem 1rem;
+  white-space: nowrap;
+}
+
+.employee-table .p-datatable-tbody > tr > td:last-child {
+  text-align: left;
+}
